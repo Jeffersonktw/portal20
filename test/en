@@ -1,47 +1,56 @@
 {% extends "base.html" %}
-
 {% load static %}
 
-{% block title %}資料論文/期刊{% endblock %}
+{% block title %}相關連結{% endblock %}
 
 {% block main %}
-{% include "inc_breadcrumb.html" with tab="01" active_label="資料論文/期刊" %}
-
+{% include "inc_breadcrumb.html" with tab="03" active_label="相關連結" %}
 
   <!-- container begin -->
   <div class="container">
     <h1 class="heading-lg-ul">
-      資料期刊/論文
+      相關連結
     </h1>
 
-    <div class="journals-intro-ctn">
-      <h3>什麼是資料論文？</h3>
-      <p>資料論文（Data paper）是一個透過同儕審查（Peer reviewed）的論文發表形式，並發表於相關的期刊上，內容主要為描述作者所開放的資料集相關資訊，包含如何產生及收集資料、資料類型、涵蓋的物種、資料開放於何處及此資料集背景資訊（Meta data）等等，透過作者於此資料集所開放的資料授權方式，可作為日後學術論文應用其資料時所引用的依據。</p>
-      <h3>資料論文期刊</h3>
-      <p>當您透過 TaiBIF 的資料發布工具 <a href="http://ipt.taibif.tw" target="_blank">IPT</a>上傳您的資料並發布後，可下載其自動產生的 RTF 檔來撰寫您的資料論文，並選擇下列期刊投稿（期刊的 impact factor 及發表費用請見：<a href="https://www.gbif.org/data-papers" target="_blank">https://www.gbif.org/data-papers</a>）</p>
+    <!-- web site begin -->
+    <h2 class="heading-md-bg">網站</h2>
+    <p>下列為國內外與生物多樣性資訊研究相關或與 TaiBIF 密切合作之政府單位或團體組織，部分單位亦依據不同目的建立生物多樣性開放資料相關資料庫，歡迎大家多加探索及利用！</p>
+    <ul class="row relateed-website-wrapper">
 
-    </div>
+      {% for post in Post_url %}
+      {% if post.cat == "web" %}
+      <li class="col-md-2 col-xs-6">
 
+        <a href="{{post.url}}" alt="" target="_blank"><img src="{{post.Upload.url}}"></a>
+        <a class="text-ellipsis-h2" href="{{post.url}}" alt="" target="_blank"><span class="myicon icon-link"></span> {{post.title}} </a>
+      </li>
 
-    <!-- list begin -->
+      {% endif %}
+      {% endfor %}
 
-    {% for jo in Journal_url%}
+    </ul>
+
+    <!-- web site end -->
+
+    <!-- database begin -->
+    <h2 class="heading-md-bg">資料庫</h2>
+    {% for post in Post_url%}
+    {% if post.cat == "data" %}
     <div class="row relateed-datasabe-wrapper">
-
       <div class="col-md-2 col-xs-4">
-        <a href="{{jo.url}}" target="_blank"><img src="{{jo.upload.url}}"></a>
+        <a href="{{post.url}}" target="_blank"><img src="{{post.Upload.url}}"></a>
       </div>
+
       <div class="col-md-10 col-xs-8">
-        <a href="{{jo.url}}"><span class="myicon icon-link"></span> {{jo.title}}</a>
-        <p>{{jo.content}}</p>
+        <a href="{{post.url}}" target="_blank"><span class="myicon icon-link"></span> {{post.title}} </a>
+        <p>{{post.content}}</p>
       </div>
-
     </div>
-    {% endfor %}
+     {% endif %}
+     {% endfor %}
 
 
 
-
-    <!-- list end -->
+    <!-- database end -->
   </div>
 {% endblock %}
