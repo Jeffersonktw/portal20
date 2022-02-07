@@ -1,67 +1,73 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load humanize %}
 {% block main %}
-{% include "inc_breadcrumb.html" with tab="03" active_label="年度計畫" %}
+{# include "inc_breadcrumb.html" with tab="03" active_label="" #}
 
-  <!-- container begin -->
+<!-- container begin -->
   <div class="container">
-    <h1 class="heading-lg-ul">
-      TaiBIF 年度計畫成果
-      <span class="heading-footnote">2017 - 2019</span>
-    </h1>
-    <!-- sort by begin -->
-    <div class="heading-sort-ctn">
-      <form class="form-inline">
-        <span class="heading-sort-name">搜尋</span>
-        <div class="custom-select">
-          <select>
-            <option>選擇年份查找...</option>
-            <option>2015 -2017</option>
-          </select>
+
+    <!-- story title begin -->
+    <div class="article-head-wrapper">
+      <h1 class="heading-lg">
+        臺灣生物多樣性資訊機構（TaiBIF）
+      </h1>
+    </div>
+    <!-- story title end -->
+
+    <!-- article content begin -->
+    <div class="article-content-wrapper">
+
+      <!-- 簡介 begin -->
+      <h4 class="heading-md-ul">簡介</h4>
+      <p>
+      臺灣生物多樣性資訊機構 TaiBIF 是臺灣數據發布活動的協調單位和技術支持團隊。由於各種原因缺乏組織支持的大多數台灣資料集都是通過TaiBIF 發布的，而其他資料集是通過 TaiBIF 認可的組織發布的。TaiBIF 由科技部資助，也是 GBIF 的臺灣代表處。TaiBIF 和 TaiBIF IPT 由中央研究院生物多樣性研究中心主辦。</p>
+
+      <p><a href="#"><span class="myicon icon-document"></span> 發布 {{ publisher.datasets.count }} 篇資料集</a>
+      </p>
+      <p><a href="#"><span class="myicon icon-document"></span> 主持 ?? 篇資料集</a>
+      </p>
+      <p><a href="#"><span class="myicon icon-document"></span> {{ publisher.sum_occurrence|intcomma }} 筆出現紀錄</a>
+      </p>
+      <!-- 簡介 end -->
+
+      <!-- 聯絡資訊 begin -->
+      <h4 class="heading-md-ul">聯絡資訊</h4>
+      <!-- row contact-info begin -->
+      <div class="row">
+
+        <div class="col-md-6 col-xs-12">
+          <div class="contact-info-wrapper">
+            <p class="heading-md-ul">
+              柯智仁
+              <span class="heading-footnote">節點經理</span>
+            </p>
+            <ul>
+              <li><span class="myicon icon-pin"></span> 11529 台北市南港區研究院路二段 128 號<br>跨領域科技研究大樓 C301室</li>
+              <li><a href="#"><span class="myicon icon-mail"></span> cjk@sinica.edu.tw</a></li>
+              <li><a href="#"><span class="myicon icon-link"></span> http://taibif.tw/</a></li>
+            </ul>
+          </div>
         </div>
-      </form>
-    </div>
-    <!-- sort by end -->
 
-    <!-- list begin (firset one) -->
-    <div class="row listbox-img-right-wrapper">
-      <div class="col-xs-8">
-        <span class="listbox-inner-date">2018/12/08</span>
-        <h3 class="listbox-inner-title"><a href="#">GBIF 正式與生物多樣性評估平台展開合作</a></h3>
-        <p class="listbox-inner-summary hidden-xs">
-          <a href="#">這項 MoU 在哥倫比亞麥德林市舉辦的 IPBES 第六次全體會議的中簽署，超過 80 個政府組織同意除將評估非洲、美洲、亞洲與太平洋以及歐洲與中亞等四個地區的生物多樣性與生態服務納入提案外，亦會將評估土地流失與恢復納入。</a>
-        </p>
       </div>
-      <div class="col-xs-4">
-        <a href="#"><img src="{% static 'images/photo-3.jpg' %}" class="img-responsive"></a>
-      </div>
-    </div>
-    <!-- list end (firset one) -->
+      <!-- row contact-info end -->
+      <!-- 聯絡資訊 end -->
+
+      <!-- 物種資料地理分布 begin -->
+      <h4 class="heading-md-ul">物種資料地理分布</h4>
+      <img src="https://fakeimg.pl/600x300/?text=map" alt="" class="img-responsive">
+      <!-- 物種資料地理分布 end -->
 
 
-    <!-- pagination begin -->
-    <div class="center-block text-center">
-      <ul class="pagination">
-        <li>
-          <a href="#" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="active"><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li>
-          <a href="#" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
+
     </div>
-    <!-- pagination end -->
+    <!-- article content begin -->
+
 
   </div>
-  <!-- container end -->
+   <!-- container end -->
+
+
 {% endblock %}
+
