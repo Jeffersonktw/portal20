@@ -1,23 +1,6 @@
-{% load helper_tags %}
-
-{% get_pagination_info object_list request.GET as page_info %}
-
-<!-- pagination begin -->
-<div class="center-block text-center">
-  <ul class="pagination">
-    {% if object_list.has_previous %}
-    <li><a href="?page={{ object_list.previous_page_number}}{{ page_info.append_query_string }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-    {% endif %}
-    {% for p in page_info.page_range %}
-      {% if object_list.number == p %}
-        <li class="active"><a href="#">{{ p }}</a></li>
-      {% else %}
-        <li><a href="{% if p == '...' %}javascript: void(0){% else %}?page={{ p }}{{ page_info.append_query_string }}{% endif %}">{{ p }}</a></li>
-      {% endif %}
-    {% endfor %}
-    {% if object_list.has_next %}
-    <li><a href="?page={{ object_list.next_page_number }}{{page_info.append_querystring }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-    {% endif %}
-  </ul>
-</div>
-<!-- pagination end -->
+                <li><a href="#" data-cat="sop" class="pub-data-nav-item active">操作流程</a></li>
+                <li><a href="#" data-cat="format" class="pub-data-nav-item">資料格式說明</a></li>
+                <li><a href="#" data-cat="cc" class="pub-data-nav-item">授權方式說明</a></li>
+                <li><a href="http://ipt.taibif.tw/" target="_blank">資料上傳網站 (IPT)</a></li>
+                <li><a href="#" data-cat="schedule" class="pub-data-nav-item">科技部資料繳交依據與時程</a></li>
+                <li><a href="#" data-cat="rule" class="pub-data-nav-item">科技部生物多樣性學科相關計畫開放資料繳交規範</a></li>
