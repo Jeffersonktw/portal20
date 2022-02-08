@@ -1,29 +1,23 @@
-<!-- breadcrumb begin -->
-  <div class="container">
-    <ol class="breadcrumb">
-      <li><a href="{% url 'index' %}">首頁</a></li>
-      {% if tab == "01" %}
-      <li>資料開放</li>
-      {% elif tab  == "02" %}
-      <li>工具與文件</li>
-      {% elif tab  == "03" %}
-      <li>關於 TaiBIF</li>
-      {% elif tab  == "04" %}
-      <li>更多資訊</li>
-      {% elif tab  == "0501" %}
-      <li><a href="{% url 'search-occurrence' cat='search' %}">物種出現紀錄</a></li>
-      {% elif tab  == "0502" %}
-      <li><a href="{% url 'search-species' %}">物種</a></li>
-      {% elif tab  == "0503" %}
-      <li><a href="{% url 'search-dataset' %}">資料集</a></li>
-      {% elif tab  == "0504" %}
-      <li><a href="{% url 'search-publisher' %}">發布單位</a></li>
-      {% elif tab  == "05" %}
-      <li>搜尋</li>
-      {% elif tab  == "occurrence" %}
-      <li><a href="/occurrence/search/">搜尋出現紀錄</a></li>
+{% load helper_tags %}
+
+{% get_pagination_info object_list request.GET as page_info %}
+
+<!-- pagination begin -->
+<div class="center-block text-center">
+  <ul class="pagination">
+    {% if object_list.has_previous %}
+    <li><a href="?page={{ object_list.previous_page_number}}{{ page_info.append_query_string }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+    {% endif %}
+    {% for p in page_info.page_range %}
+      {% if object_list.number == p %}
+        <li class="active"><a href="#">{{ p }}</a></li>
+      {% else %}
+        <li><a href="{% if p == '...' %}javascript: void(0){% else %}?page={{ p }}{{ page_info.append_query_string }}{% endif %}">{{ p }}</a></li>
       {% endif %}
-      <li class="active">{{ active_label }}</li>
-    </ol>
-  </div>
-  <!-- breadcrumb end -->
+    {% endfor %}
+    {% if object_list.has_next %}
+    <li><a href="?page={{ object_list.next_page_number }}{{page_info.append_querystring }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+    {% endif %}
+  </ul>
+</div>
+<!-- pagination end -->
