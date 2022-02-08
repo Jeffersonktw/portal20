@@ -1,83 +1,57 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}工具分享{% endblock %}
+{% block title %}GBIF 介紹{% endblock %}
 
 {% block main %}
-{% include "inc_breadcrumb.html" with tab="02" active_label="工具分享" %}
+{% include "inc_breadcrumb.html" with tab="03" active_label="GBIF 介紹" %}
 
+<!-- container begin -->
+<div class="container">
+  <h1 class="heading-lg-ul">
+    什麼是 GBIF ?
+  </h1>
 
-  <!-- container begin -->
-  <div class="container">
-    <h1 class="heading-lg-ul">
-      工具分享
-    </h1>
+  {% comment %}
+  <blockquote>全球生物多樣性資訊機構，簡稱 GBIF，是一個由全球政府資助而成立的跨國合作網絡及研究基礎建設，成立宗旨在於提供大眾無論何時、何地均能公開且自由存取的、各種地球上的生物資料</blockquote>
+  {% endcomment %}
+  <div class="article-content-wrapper">
+    <p>
+      全球生物多樣性資訊機構，簡稱 GBIF，是一個由全球政府資助而成立的跨國合作網絡及研究基礎建設，成立宗旨在於提供大眾無論何時、何地均能公開且自由存取的、各種地球上的生物資料。</p>
 
-    <div class="journals-intro-ctn">
-      <p>生物多樣性資料校對轉換工具為 TaiBIF 資訊團隊研發，目前提供學名檢查、中文名批次比對與座標轉換。本研究目前由中研院「台灣生物多樣性資訊平台之學術、社會推廣與國際接軌」、科技部「建置與維護及整合臺灣生物多樣性資訊國家入口網 (TaiBIF) 及與 GBIF 接軌」及林務局「生態資源資料庫分組整合推動計畫」等計畫經費支持，引用網址：<a href="https://portal.taibif.tw/coordinateConverter.php" target="_blank">https://portal.taibif.tw/coordinateConverter.php</a></p>
-    </div>
+<p>位於哥本哈根的GBIF祕書處負責統整機構的運作，以參與國、合作組織作為節點(Node)，各節點收集的資料以共同標準、開源格式提供給全球的資料中心，使得這些包含記錄地點、時間的生物資訊得以公開分享。這些生物資訊來源不一，有自 18 至 19 世紀時期博物館的標本典藏，到近年來業餘自然學家們發布附有地理標記的手機拍攝照片。</p>
 
-    <!-- list begin -->    
-    <!-- <div class="tools-intro-wrapper">
-      <div class="tools-title">學名拼字校對</div>
-      <div class="tools-content">
-        <p>
-          為能提升學名之正確性，本系統蒐羅 TaiCoL、GBIF backbone 與 Species 2000 名錄資料庫之學名資料做為比對校正之參考依據，並能顯示簡便明確的拼字差異及相似程度，以方便使用者鑑別學名字母異同之處，順利且省時地進行名錄之修訂。
-        </p>
-        <p><a href="http://taibif.tw/BDTools/lcs2.php" target="_blank"><span class="myicon icon-link"></span> Catalogue of Life (Species 2000) 名錄比對</a></p>
-        <p><a href="http://taibif.tw/BDTools/solrName-en.php" target="_blank"><span class="myicon icon-link"></span> Scientific name spell checker (Checklist of Taiwan)</a></p>
-        <p><a href="http://taibif.tw/BDTools/solrName.php" target="_blank"><span class="myicon icon-link"></span> 臺灣物種名錄比對</a></p>
-      </div>
-    </div> -->
-    <div class="tools-intro-wrapper">
-      <div class="tools-title">地理分布線上座標轉換</div>
-      <div class="tools-content">
-        <p>
-          有鑑於過去物種生態分布之地理座標系統不同，造成整合地理資訊上之困難，及物種於地圖上標記之錯誤，因此本系統可提供線上地理座標資訊，以便使用者更新老舊生態分布之資料，得以進一步比較分析與研究，系統提供 WGS 84、TM2 67 與 TM2 97 三種格式之間的相互轉換。
-        </p>
-        <p><a href="https://portal.taibif.tw/coordinateConverter.php" target="_blank"><span class="myicon icon-link"></span> 座標轉換</a></p>
-      </div>
-    </div>
-
-    <div class="tools-intro-wrapper">
-      <div class="tools-title">物種中文名比對</div>
-      <div class="tools-content">
-        <p>
-          此工具提供使用者上傳多筆中文名稱，工具會針對所上傳的物種中文名稱比對出臺灣物種名錄中所對應的物種學名與物種代碼（name code），若比對不到中文名稱則傳回「no match」之訊息。
-        </p>
-        <p><a href="{% url 'tools-common_name_checker' %}" target="_blank"><span class="myicon icon-link"></span> 物種中文名比對</a></p>
-      </div>
-    </div>
-
-    <!--div class="tools-intro-wrapper">
-      <div class="tools-title">學名書寫形式校對</div>
-      <div class="tools-content">
-        <p>
-          為能提升學名書寫格式之一致性，本系統蒐羅 TaiCoL 名錄資料庫之學名資料做為比對校正之參考依據，提供學名、分類層級標識、命名者及年代之完整書寫順序，不僅能夠補足額外學名資訊外，更可讓使用者能簡便的統一學名資料格式，以提升未來資料比對交換之準確性。
-        </p>
-        <p><a href="http://taibif.tw/BDTools/getSCname.php" target="_blank"><span class="myicon icon-link"></span> 學名書寫形式校對</a></p>
-      </div>
-    </div>
-
-     <div class="tools-intro-wrapper">
-      <div class="tools-title">地理座標驗證</div>
-      <div class="tools-content">
-        <p>
-          為了提高物種分布準確性及達成利用地理資訊整合查詢之目的，故而開發本工具。使用者僅需上傳 EXCEL 檔案，檔案中包含三個欄位資訊，分別為 loc（地點文字說明）、x（經度）、y（緯度），本工具會依據這進行簡易的判斷，如地點與座標差異過大、或修正座標格式……等等，並將錯誤判別資訊回傳於使用者。
-        </p>
-        <p><a href="http://taibif.tw/BDTools/vgd.html" target="_blank"><span class="myicon icon-link"></span> 地理坐標驗證</a></p>
-      </div>
-    </div -->
-
-     <div class="tools-intro-wrapper">
-      <div class="tools-title">有效學名比對</div>
-      <div class="tools-content">
-        <p>
-          物種在分類學上往往存在同物異名，本工具提供批次的物種學名比對，可提供該學名是否為有效學名及物種代碼等相關資訊。
-        </p>
-        <p><a href="http://match.taibif.tw/" target="_blank"><span class="myicon icon-link"></span> NomenMatch</a></p>
-      </div>
-    </div>
-    <!-- list end -->
+<p>GBIF以達爾文核心集（Darwin Core）標準格式彙整所有不同來源的資料，形成 GBIF.org 上億萬筆的物種出現記錄資料索引的基礎。彙整的資料在創用 CC 授權條款下，供科學家、研究人員及民眾公開自由存取，可運用於同儕審查論文發表及政策文件中，研究運用的主題涵蓋氣候變遷的衝擊、外來入侵害蟲的擴散、保育與保護區的優先順序、食品安全及人類健康等。</p>
   </div>
+
+    <div class="article-content-wrapper">
+      <h3>背景與歷史沿革</h3>
+      <p>
+        GBIF 的創立，起始於 1999 年經濟合作暨發展組織(OECD)大科學論壇中，生物多樣性資訊小組的建議報告。這份報告提出：國際間需要建立可以自由存取生物多樣性資料、資訊的機制，藉由提供可靠正確的科學證據，可為經濟、社會帶來益處並促進永續發展。</p>
+
+      <p>OECD 的專家小組明確地建議設立一個全球生物多樣性資訊機構，讓全球大眾能瀏覽且使用大量的生物多樣性資訊、促進科學研究、提升經濟、生活品質等社會利益、提供自然知識快速成長的基礎，同時避免重覆的勞力和花費。</p>
+
+      <p>2001 年，該項建議被 OECD 科學部首長們採納，參與的各國政府於合作備忘錄(MOU)簽署下正式成立 GBIF。
+        TaiBIF 所推動的生物多樣性資訊整合包含兩個層面。首先是資料共享的文化，透過與各主管單位及研究團隊討論資料管理的觀念和方法，提昇研究人員對於資料價值的認同，從而願意將資料的整理、備份，以及資料標準化、加強資料可讀與重複利用性等工作，納入日常研究活動當中。其次是生物多樣性資訊服務及基礎建設的開發，透過制度的建立及軟體工程方法，確保資料的發布和取用流程中，均有合適的軟體解決方案協助。</p>
+    </div>
+
+
+    <div class="article-content-wrapper">
+    <p>
+    <h3>關於秘書處</h3>
+    <p>GBIF 秘書處目前規劃為四個團隊：</p>
+    <ul>
+      <li>參與合作部門：推動組織成員間的合作、招募新合作夥伴、並增進既有成員的運作能量。</li>
+      <li>資料產品部門：確保GBIF所提供彙整資料的品質與其科學價值。</li>
+      <li>資訊部門：執行資料管理、軟體開發及GBIF基礎設施運作。</li>
+      <li>行政事務部門：聯繫 GBIF 網絡間合作及秘書處的行政事務處理。</li>
+    </ul>
+    </div>
+
+    <hr>
+    <div>
+      <small>資料來源: <a href="https://www.gbif.org/zh-tw/what-is-gbif">什麼是 GBIF ?</a></small>
+    </div>
+</div>
+  <!-- container end -->
 {% endblock %}
