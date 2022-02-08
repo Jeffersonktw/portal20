@@ -1,53 +1,254 @@
 {% extends "base.html" %}
-
 {% load static %}
 {% load humanize %}
 
-{% block title %}
-Search
-{% endblock %}
-
 {% block head %}
-{#<link rel="stylesheet" href="{% static 'css/search.css' %}" />#}
-<style>
-  .loading-overlay {
-  position: fixed; /* Sit on top of the page content */
-  display: none; /* Hidden by default */
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
-}
-.shape-ex5{
-    max-width:  100%;
-    display: flex;
-    justify-content: center;
-}
+<link href="{% static 'css/taibif.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+<script src="{% static 'js/leaflet.js' %}"></script>
+<script src="{% static 'js/leaflet-heat.js' %}"></script>
 
-</style>
-{#<link rel="stylesheet" href="{% static 'css/tree.css' %}" />#}
+    <style>
+        #map { height: 600px; }
+        body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
+        .ghbtns { position: relative; top: 4px; margin-left: 5px; }
+        a { color: #0077ff; }
+    </style>
 {% endblock %}
 
 {% block script %}
-{#<script src="https://code.highcharts.com/highcharts.js"></script>#}
-{#<script src="https://code.highcharts.com/modules/exporting.js"></script>#}
-{#<script src="{% static 'js/test.js' %}"></script>#}
-{% if env == "prod" or env == "stag" %}
-<script src="{% static 'js/search.min.js' %}"></script>
-{% else %}
-<script src="{% static 'js/search.dev.js' %}"></script>
+
+ <!-- script 4 owl carousel begin -->
+  <script>
+    $(document).ready(function() {
+      var owl = $('#speciesGallery');
+      owl.owlCarousel({
+        nav: false,
+        dots: false,
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+        items : 1,
+        animateOut: 'fadeOut',
+        thumbs: true,
+        thumbImage: true,
+        lazyLoad : true,
+      })
+    })
+  </script>
+  <!-- script 4 owl carousel end -->
+
+  <!-- script 4 data table begin -->
+  <script>
+    $(function () {
+      $('#dataset-table').DataTable({
+        'paging'      : true,
+        'lengthChange': false,
+        'searching'   : false,
+        'ordering'    : false,
+        'info'        : false,
+        'autoWidth'   : false
+      })
+
+    })
+  </script>
+  <!-- script 4 data table end -->
+
+  <!-- script 4 adjust Anchor begin -->
+  <script type="text/javascript">
+    function adjustAnchor() {
+      const $anchor = $(':target');
+      const fixedElementHeight = $('.navbar-fixed-top').outerHeight() + 30;
+      if ($anchor.length > 0)
+        window.scrollTo(0, $anchor.offset().top - fixedElementHeight);
+    }
+    $(window).on('hashchange load', adjustAnchor);
+    $('body').on('click', "a[href^='#']", function (ev) {
+      if (window.location.hash === $(this).attr('href')) {
+        ev.preventDefault();
+        adjustAnchor();
+      }
+    });
+  </script>
+  {% if map_view %}
+  <script src="{% static 'js/species.js' %}" crossorigin="anonymous" taxon_rank = {{ taxon.rank }} taxon_id = {{ taxon.id }}></script>
 {% endif %}
-{% endblock %}
+  {% endblock %}
 
 {% block main %}
-<!--div class="container search-container" id="taibif-search-container" data-q="{{ request.GET.q }}"></div-->
-<!-- <div class="container-fluid search-container-fluid" id="taibif-search-container" data-q="{{ request.GET.q }}"></div> -->
-<!-- <div class="shape-ex5">
-    <img src="{% static 'images/maintain.png' %}" style="max-width:40%">
-</div> -->
+{% include "inc_breadcrumb.html" with tab="0502" active_label="" %}
+
+<!-- container begin -->
+  <div class="container">
+    <!-- amchor btns begin -->
+    
+    <ul class="article-scroll-nav-wrapper">
+      {% if taxon.synonyms %}
+      <li><a href="#section1">同物異名</a></li>
+      {% endif %}
+      <li><a href="#section2">地理分佈</a></li>
+      <li><a href="#section3">資料集出現次數</a></li>
+      <li><a href="#section4">物種描述</a></li>
+      {% if taxon.reference %}
+      <li><a href="#section5">文獻</a></li>
+      {% endif %}
+    </ul>
+    <!-- amchor btns begin -->
+
+    <!-- story title begin -->
+    <div class="article-head-wrapper">
+      <h1 class="heading-lg">
+        <i>{{ taxon.name }} </i> {% if taxon.name_zh %} {{ taxon.name_zh }}{% endif %} {% if not taxon.is_accepted_name %}<small><span class="label label-warning">同物異名</span></small>{% endif %}
+      </h1>
+    </div>
+    <!-- story title end -->
+
+
+    <!-- article content begin -->
+    <div class="article-content-wrapper">
+
+      <!-- 學名 begin -->
+      <!-- <h4 class="heading-md-ul">學名</h4> -->
+      <ul class="scientific-name-wrapper">
+        {% for i in taxon.rank_list %}
+        <li>{{ i.scientific_name_full }} {{ i.name_zh }}</li>
+        {% endfor %}
+        <li><i>{{ taxon.scientific_name_full }}</i> {% if taxon.name_zh %} {{ taxon.name_zh }}{% endif %}</li>
+      </ul>
+      <!-- 學名 end -->
+
+      <!-- 同物異名 begin -->
+      <div id="section1">
+        {% if not taxon.is_accepted_name %}
+        <h4 class="heading-md-ul">有效學名</h4>
+        <p><i>{{ taxon.accepted_name.name }}</i>{% if taxon.accepted_name.name_zh %} {{ taxon.accepted_name.name_zh }}{% endif %}</p>
+        {% endif %}
+        {% if taxon.synonyms %}
+        <h4 class="heading-md-ul">同物異名</h4>
+        {% for i in taxon.synonyms %}
+        <p><i>{{ i.name }}</i>{% if i.name_zh %} {{ i.name_zh }}{% endif %}</p>
+        {% endfor %}
+      </div>
+      <!-- 同物異名 end -->
+
+      {% endif %}
+      <!-- TaiCoL編號 begin -->
+      <p align="right"><a href="{{ taxon.taicol_namecode_link }}"><span class="myicon icon-link"></span>來源：TaiCoL</a></p>
+      <!-- TaiCoL編號 end -->
+
+      <!-- 地理分佈 begin -->
+      <div id="section2">
+        <h4 class="heading-md-ul">地理分佈</h4>
+
+        {% if map_view %}
+          <div id="map"></div>
+        {% else %}
+          No data available
+        {% endif %}
+      </div>
+      <!-- 地理分佈 end -->
+
+
+      <!-- 資料集出現次數 begin -->
+      <div id="section3">
+        <h4 class="heading-md-ul">資料集出現次數</h4>
+        <table id="dataset-table" class="table table-bordered">
+          <thead>
+            <tr>
+              <th>資料集</th>
+              <th>出現次數</th>
+              <!-- <th>&nbsp;</th> -->
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for set in dataset %}
+
+            <tr>
+              <td><a href="{% url 'dataset-detail'  name=set.name %}">{{ set.name_zh }}</a></td>
+              <td>{{ set.count }}</td>
+              <!-- <td> -->
+<!-- 占比 -->
+                <!-- <div class="chart-bar-h-bg">
+                  <span class="chart-value-bg" style="width: {{ set.ratio }}%"></span>
+                </div>
+
+              </td> -->
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+      <!-- 資料集出現次數 end -->
+
+      <!-- TaiCol物種描述 begin -->
+      <div id="section4">
+        <h4 class="heading-md-ul">物種描述</h4>
+        
+        {% if taxon.taieol_desc %}
+        {{taxon.taieol_desc}}
+        {% endif %}
+
+        <!-- carousel photos begin -->
+          <div class="owl-carousel owl-theme" id="speciesGallery">
+            {% for i in taxon.species_pic %}
+              {% if i.taieol_pic %}
+                <div>
+                  <img  src="{{i.taieol_pic}}">
+                  <div class="home-banner-cover-license">{{i.name}} {% if i.name_zh %} {{ i.name_zh }}{% endif %}</div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+      <!-- TaiCol物種描述 end -->
+
+
+      <!-- Kuan Yu added for taieol discription -->
+      {% for i in species_info.taieol_desc %}
+       <div id="section9">
+         <h4 class="heading-md-ul">{{ i.title }}</h4>
+         {{ i.content | striptags }}
+       </div>
+      {% endfor %}
+      <!-- <p><a href="{{ taxon. }}"><span class="myicon icon-link"></span>來源：生命大百科</a></p> -->
+
+       <!-- 文獻 begin -->
+       {% if  taxon.reference %}
+        <div id="section5">
+          <h4 class="heading-md-ul">文獻</h4>
+          {{taxon.reference}}
+          <!-- literature info begin >
+          <div class="ref-literature-wrapper">
+            <p><a href="#"><span class="myicon icon-link"></span> 臺灣維管束植物簡誌 (楊遠波, 劉和義, 呂勝由)</a></p>
+            <dl class="ref-literature-dl">
+              <dt>出版年</dt>
+              <dd>1980</dd>
+              <dt>作者</dt>
+              <dd>劉培槐、張惠珠、呂勝由、楊遠波等</dd>
+              <dt>出版者</dt>
+              <dd>臺灣省政府教育廳</dd>
+            </dl>
+          </div>
+
+          <div class="ref-literature-wrapper">
+            <p><a href="#"><span class="myicon icon-link"></span> 臺灣維管束植物簡誌 (楊遠波, 劉和義, 呂勝由)</a></p>
+            <dl class="ref-literature-dl">
+              <dt>出版年</dt>
+              <dd>1980</dd>
+              <dt>作者</dt>
+              <dd>劉培槐、張惠珠、呂勝由、楊遠波等</dd>
+              <dt>出版者</dt>
+              <dd>臺灣省政府教育廳</dd>
+            </dl>
+          </div>
+          < literature info end -->
+        </div>
+      {% endif %}
+      <!-- 文獻 end -->
+
+
 {% endblock %}
+
