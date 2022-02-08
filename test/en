@@ -1,254 +1,88 @@
 {% extends "base.html" %}
 {% load static %}
-{% load humanize %}
-
-{% block head %}
-<link href="{% static 'css/taibif.css' %}" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
-<script src="{% static 'js/leaflet.js' %}"></script>
-<script src="{% static 'js/leaflet-heat.js' %}"></script>
-
-    <style>
-        #map { height: 600px; }
-        body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
-        .ghbtns { position: relative; top: 4px; margin-left: 5px; }
-        a { color: #0077ff; }
-    </style>
-{% endblock %}
-
-{% block script %}
-
- <!-- script 4 owl carousel begin -->
-  <script>
-    $(document).ready(function() {
-      var owl = $('#speciesGallery');
-      owl.owlCarousel({
-        nav: false,
-        dots: false,
-        loop: true,
-        autoplay: true,
-        autoplayTimeout: 3000,
-        autoplayHoverPause: true,
-        items : 1,
-        animateOut: 'fadeOut',
-        thumbs: true,
-        thumbImage: true,
-        lazyLoad : true,
-      })
-    })
-  </script>
-  <!-- script 4 owl carousel end -->
-
-  <!-- script 4 data table begin -->
-  <script>
-    $(function () {
-      $('#dataset-table').DataTable({
-        'paging'      : true,
-        'lengthChange': false,
-        'searching'   : false,
-        'ordering'    : false,
-        'info'        : false,
-        'autoWidth'   : false
-      })
-
-    })
-  </script>
-  <!-- script 4 data table end -->
-
-  <!-- script 4 adjust Anchor begin -->
-  <script type="text/javascript">
-    function adjustAnchor() {
-      const $anchor = $(':target');
-      const fixedElementHeight = $('.navbar-fixed-top').outerHeight() + 30;
-      if ($anchor.length > 0)
-        window.scrollTo(0, $anchor.offset().top - fixedElementHeight);
-    }
-    $(window).on('hashchange load', adjustAnchor);
-    $('body').on('click', "a[href^='#']", function (ev) {
-      if (window.location.hash === $(this).attr('href')) {
-        ev.preventDefault();
-        adjustAnchor();
-      }
-    });
-  </script>
-  {% if map_view %}
-  <script src="{% static 'js/species.js' %}" crossorigin="anonymous" taxon_rank = {{ taxon.rank }} taxon_id = {{ taxon.id }}></script>
-{% endif %}
-  {% endblock %}
 
 {% block main %}
-{% include "inc_breadcrumb.html" with tab="0502" active_label="" %}
+{% include "inc_breadcrumb.html" with tab="02" active_label="工具分享" %}
 
-<!-- container begin -->
-  <div class="container">
-    <!-- amchor btns begin -->
-    
-    <ul class="article-scroll-nav-wrapper">
-      {% if taxon.synonyms %}
-      <li><a href="#section1">同物異名</a></li>
-      {% endif %}
-      <li><a href="#section2">地理分佈</a></li>
-      <li><a href="#section3">資料集出現次數</a></li>
-      <li><a href="#section4">物種描述</a></li>
-      {% if taxon.reference %}
-      <li><a href="#section5">文獻</a></li>
-      {% endif %}
-    </ul>
-    <!-- amchor btns begin -->
+ <style>
+   p{
+  line-height: 1.8;
+  }
 
-    <!-- story title begin -->
-    <div class="article-head-wrapper">
-      <h1 class="heading-lg">
-        <i>{{ taxon.name }} </i> {% if taxon.name_zh %} {{ taxon.name_zh }}{% endif %} {% if not taxon.is_accepted_name %}<small><span class="label label-warning">同物異名</span></small>{% endif %}
-      </h1>
-    </div>
-    <!-- story title end -->
+  hr {
+  border-top: 1px solid;
+    }
+ </style>
 
+  <!-- container begin -->
+ <div class="container">
+   {% if message %}
+  <div class="alert alert-warning alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>{{ message.head }}</strong> {{ message.content }}
+  </div>
+  {% endif %}
 
-    <!-- article content begin -->
-    <div class="article-content-wrapper">
+    <h2 class="h2">
+      物種中文名比對
+    </h2>
 
-      <!-- 學名 begin -->
-      <!-- <h4 class="heading-md-ul">學名</h4> -->
-      <ul class="scientific-name-wrapper">
-        {% for i in taxon.rank_list %}
-        <li>{{ i.scientific_name_full }} {{ i.name_zh }}</li>
-        {% endfor %}
-        <li><i>{{ taxon.scientific_name_full }}</i> {% if taxon.name_zh %} {{ taxon.name_zh }}{% endif %}</li>
-      </ul>
-      <!-- 學名 end -->
-
-      <!-- 同物異名 begin -->
-      <div id="section1">
-        {% if not taxon.is_accepted_name %}
-        <h4 class="heading-md-ul">有效學名</h4>
-        <p><i>{{ taxon.accepted_name.name }}</i>{% if taxon.accepted_name.name_zh %} {{ taxon.accepted_name.name_zh }}{% endif %}</p>
-        {% endif %}
-        {% if taxon.synonyms %}
-        <h4 class="heading-md-ul">同物異名</h4>
-        {% for i in taxon.synonyms %}
-        <p><i>{{ i.name }}</i>{% if i.name_zh %} {{ i.name_zh }}{% endif %}</p>
-        {% endfor %}
-      </div>
-      <!-- 同物異名 end -->
-
-      {% endif %}
-      <!-- TaiCoL編號 begin -->
-      <p align="right"><a href="{{ taxon.taicol_namecode_link }}"><span class="myicon icon-link"></span>來源：TaiCoL</a></p>
-      <!-- TaiCoL編號 end -->
-
-      <!-- 地理分佈 begin -->
-      <div id="section2">
-        <h4 class="heading-md-ul">地理分佈</h4>
-
-        {% if map_view %}
-          <div id="map"></div>
-        {% else %}
-          No data available
-        {% endif %}
-      </div>
-      <!-- 地理分佈 end -->
-
-
-      <!-- 資料集出現次數 begin -->
-      <div id="section3">
-        <h4 class="heading-md-ul">資料集出現次數</h4>
-        <table id="dataset-table" class="table table-bordered">
-          <thead>
-            <tr>
-              <th>資料集</th>
-              <th>出現次數</th>
-              <!-- <th>&nbsp;</th> -->
-            </tr>
-          </thead>
-          <tbody>
-
-            {% for set in dataset %}
-
-            <tr>
-              <td><a href="{% url 'dataset-detail'  name=set.name %}">{{ set.name_zh }}</a></td>
-              <td>{{ set.count }}</td>
-              <!-- <td> -->
-<!-- 占比 -->
-                <!-- <div class="chart-bar-h-bg">
-                  <span class="chart-value-bg" style="width: {{ set.ratio }}%"></span>
-                </div>
-
-              </td> -->
-            </tr>
-
-            {% endfor %}
-
-          </tbody>
-        </table>
-      </div>
-      <!-- 資料集出現次數 end -->
-
-      <!-- TaiCol物種描述 begin -->
-      <div id="section4">
-        <h4 class="heading-md-ul">物種描述</h4>
-        
-        {% if taxon.taieol_desc %}
-        {{taxon.taieol_desc}}
-        {% endif %}
-
-        <!-- carousel photos begin -->
-          <div class="owl-carousel owl-theme" id="speciesGallery">
-            {% for i in taxon.species_pic %}
-              {% if i.taieol_pic %}
-                <div>
-                  <img  src="{{i.taieol_pic}}">
-                  <div class="home-banner-cover-license">{{i.name}} {% if i.name_zh %} {{ i.name_zh }}{% endif %}</div>
-                </div>
-              {% endif %}
-            {% endfor %}
+    <div class="journals-intro-ctn">
+      <p>此工具提供使用者上傳多筆中文名稱，工具會針對所上傳的物種中文名稱比對出臺灣物種名錄中所對應的物種學名與物種代碼（name code），若比對不到中文名稱則傳回「no match」之訊息。</p>
+      <form method="POST" action="{% url 'tools-common_name_checker' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="query-sep">分隔</label>
+          <div class="row">
+            <div class="col-xs-2">
+              <select name="sep" id="query-sep" class="form-control"><option value="">-- 請選擇--</option><option value="n">換行符號(\n)</option><option value=",">,</option></select>
+            </div>
           </div>
-      <!-- TaiCol物種描述 end -->
-
-
-      <!-- Kuan Yu added for taieol discription -->
-      {% for i in species_info.taieol_desc %}
-       <div id="section9">
-         <h4 class="heading-md-ul">{{ i.title }}</h4>
-         {{ i.content | striptags }}
-       </div>
-      {% endfor %}
-      <!-- <p><a href="{{ taxon. }}"><span class="myicon icon-link"></span>來源：生命大百科</a></p> -->
-
-       <!-- 文獻 begin -->
-       {% if  taxon.reference %}
-        <div id="section5">
-          <h4 class="heading-md-ul">文獻</h4>
-          {{taxon.reference}}
-          <!-- literature info begin >
-          <div class="ref-literature-wrapper">
-            <p><a href="#"><span class="myicon icon-link"></span> 臺灣維管束植物簡誌 (楊遠波, 劉和義, 呂勝由)</a></p>
-            <dl class="ref-literature-dl">
-              <dt>出版年</dt>
-              <dd>1980</dd>
-              <dt>作者</dt>
-              <dd>劉培槐、張惠珠、呂勝由、楊遠波等</dd>
-              <dt>出版者</dt>
-              <dd>臺灣省政府教育廳</dd>
-            </dl>
-          </div>
-
-          <div class="ref-literature-wrapper">
-            <p><a href="#"><span class="myicon icon-link"></span> 臺灣維管束植物簡誌 (楊遠波, 劉和義, 呂勝由)</a></p>
-            <dl class="ref-literature-dl">
-              <dt>出版年</dt>
-              <dd>1980</dd>
-              <dt>作者</dt>
-              <dd>劉培槐、張惠珠、呂勝由、楊遠波等</dd>
-              <dt>出版者</dt>
-              <dd>臺灣省政府教育廳</dd>
-            </dl>
-          </div>
-          < literature info end -->
         </div>
+        <div class="form-group">
+          <label for="query-cn">輸入中文名</label>
+          <textarea name="q" id="query-cn" class="form-control" rows="5">{% if q %}{{ q }}{% endif %}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">比對</button>
+      </form>
+      {% if results %}
+      <table class="table">
+        <colgroup>
+          <col span="1" style="width: 1%;">
+          <col span="1" style="width: 10%;">
+          <col span="1" style="width: 9%;">
+          <col span="1" style="width: 70%;">
+          <col span="1" style="width: 10%;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>輸入中文名</th>
+            <th>比對</th>
+            <th>結果: 學名(中文名) [name_code]</th>
+            <th>搜尋替換</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in results %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ i.common_name }}</td>
+            <td>{{ i.match_type }}{% if i.match_list %}: {{ i.match_list|length }}{% endif %}</td>
+            <td>
+              <ul>{% for t in i.match_list %}
+                <li>
+                  <!-- {{ t.scientific_name_infraspecific }}  -->
+                  {{ t.name }} 
+                  {% if t.name_zh %}({{ t.name_zh }}) [<a href="{{ t.taicol_namecode_link }}" target="_blank">{{ t.source_id}}</a>]{% endif %}
+                </li>{% endfor%}
+              </ul>
+              </td><td>{{ i.q_replace }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
       {% endif %}
-      <!-- 文獻 end -->
-
-
+    </div>
+    <a href="{% url 'export_csv' %}">export to csv</a>
+  </div>
 {% endblock %}
-
