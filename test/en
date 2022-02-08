@@ -3,8 +3,6 @@
 {% load static %}
 {% load helper_tags %}
 
-{% block title %}{{ article_cat_label }}{% endblock %}
-
 {% block head %}
     <!-- date range picker CSS -->
     <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}">
@@ -41,125 +39,26 @@
 {% endblock %}
 
 {% block main %}
-  <!-- carousel begin -->
-  <div id="carousel-example" class="carousel slide" data-ride="carousel">
-    <!-- carousel indicators begin -->
-    <ol class="carousel-indicators">
-      <li data-target="#carousel-example" data-slide-to="0" class="active"></li>
-      <li data-target="#carousel-example" data-slide-to="1"></li>
-    </ol>
-    <!-- carousel indicators end -->
-
-    <!-- carousel content wrapper begin -->
-    <div class="carousel-inner" role="listbox">
-      {% for i in cover_list %}
-      <div class="head-carousel-wrapper item{% if forloop.counter == 1 %} active{% endif %}" style="background-image: url('{% if i.cover %}{{ i.cover.url}}{% endif %}');">
-        <a href="{{ i.get_absolute_url }}" class="head-carousel-btn"></a>
-        <div class="carousel-caption">
-          <span class="head-carousel-cate">{{ i.get_category_display }}</span>
-          <h3 class="head-carousel-title"><a href="{{ i.get_absolute_url }}" style = "color:white">{{ i.title }}</a></h3>
-          <div class="home-banner-cover-license">{{ i.cover_license_text }}</div>
-        </div>
-
-      </div>
-      {% endfor %}
-    </div>
-    <!-- carousel content wrapper begin -->
-
-    <!-- carousel controls begin -->
-    <a class="left carousel-control" href="#carousel-example" role="button" data-slide="prev">
-      <span class="myicon icon-arrow-left" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#carousel-example" role="button" data-slide="next">
-      <span class="myicon icon-arrow-right" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
-    <!-- carousel controls end -->
-  </div>
-  <!-- carousel end -->
 
   {% include "inc_breadcrumb.html" with tab="04" active_label="" %}
 
   <!-- container begin -->
   <div class="container">
-    {% if layout_type == "A1" %}
-    <h1 class="heading-lg-ul">
-      {{ article_cat_label }}
-      <span class="heading-footnote">全部</span>
-    </h1>
-    <!-- sort by begin -->
-    <div class="heading-sort-ctn">
-      <form class="form-inline">
-        <span class="heading-sort-name">篩選</span>
-        <div class="input-group">
-          <div class="input-group-addon">
-            <i class="glyphicon glyphicon-calendar"></i>
-          </div>
-          <input type="text" class="form-control" placeholder="以時間篩選新聞..." id="newsFilter" value="{% if request.GET.start and request.GET.end %}{{ request.GET.start }} - {{request.GET.end }}{% endif %}">
-        </div>
-      </form>
-    </div>
-    {% elif layout_type == "A2" %}
-    <h1 class="heading-lg-ul">
-      {{ article_cat_label }}
-      <span class="heading-footnote">全部</span>
-    </h1>
-    <!-- sort by begin -->
-    <div class="heading-sort-ctn">
-      <form class="form-inline">
-        <span class="heading-sort-name">篩選</span>
-
-        <label class="custom-input-ctn">
-          <input type="checkbox" class="select-category-sci" data-type="sci">
-          <span class="checkmark"></span>
-         科普文章
-        </label>
-
-        <label class="custom-input-ctn">
-          <input type="checkbox" class="select-category-sci" data-type="tech">
-          <span class="checkmark"></span>
-          技術專欄
-        </label>
-
-        <label class="custom-input-ctn">
-          <input type="checkbox" class="select-category-sci" data-type="pub">
-          <span class="checkmark"></span>
-          出版品資料
-        </label>
-        <label class="custom-input-ctn">
-          <input type="checkbox" class="select-category-sci" data-type="pos">
-          <span class="checkmark"></span>
-          發表文章/海報
-        </label> 
-      </form>
-    </div>
-    {% endif %}
-    <!-- sort by end -->
     {% for article in article_list %}
     <div class="row listbox-img-right-wrapper">
       <div class="col-xs-8">
         <span class="listbox-inner-date">{{ article.created|date:'Y/m/d' }}</span>
-        <h3 class="listbox-inner-title"><a href="{{ article.get_absolute_url }}" target="_blank" rel="noreferrer noopener">{{ article.title }}</a></h3>
+        <h3 class="listbox-inner-title"><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
         <p class="listbox-inner-summary hidden-xs">
-            {% if article.memo|slice:"0:4" == "nid:" %}
-            {# old article content #}
-            {% if article.category == "UPDATE" %}
-            {% else %}
-            {{ article.content|striptags|truncatechars:150 }}
-            <p><a href="{% url 'article-detail-id' pk=article.id %}" target="_blank" rel="noreferrer noopener">閱讀更多</a></p>
-            {% endif %}
-            {% else %}
-            {{ article.content | linebreaks | truncatechars:150}}
-            <p><a href="{% url 'article-detail-id' pk=article.id %}" target="_blank" rel="noreferrer noopener">閱讀更多</a></p>
-            {% endif %}
+          {{ article.content | linebreaks | truncatechars:150}}
+            <p><a href="{% url 'article-detail-id' pk=article.id %}">閱讀更多</a></p>
         </p>
       </div>
-      {% if article.cover %}
+      {% comment %}
       <div class="col-xs-4">
-        <a href="{% url 'article-detail-id' pk=article.id %}"><img src="/media/{{ article.cover }}" class="img-responsive"></a>
+        <a href=""><img src="/media/{{ article.cover }}" class="img-responsive"></a>
       </div>
-      {% endif %}
+      {% endcomment %}
     </div>
     {% endfor %}
 
