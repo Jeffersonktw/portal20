@@ -1,133 +1,172 @@
 {% extends "base.html" %}
 {% load static %}
 {% load humanize %}
-
-{% block title %}
-資料發布狀況
-{% endblock %}
-{% block head %}
-<style>
-  .axis {
-      font: 16px sans-serif;
-  }
-  .axis path,
-  .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-  }
-
-svg text.label {
-  fill: #846C5B;
-  font-size: 15px;
-  font-weight: 400;
-  text-anchor: middle;
-}
-
-</style>
-{% endblock %}
-
-{% block script %}
-{#<script src="https://d3js.org/d3.v3.min.js"></script>#}
-<script src="{% static 'js/d3.min.js' %}"></script>
-<script src="{% static 'js/analytics.js' %}"></script>
-
-{% if env == "dev" %}
-<script src="{% static 'js/dataset-table.js' %}"></script>
-{% elif env == "prod" %}
-<script src="{% static 'js/dataset-table.min.js' %}"></script>
-{% endif %}
-
-<script>
-  const checkboxMOST = document.querySelector('.check-most');
-  checkboxMOST.onclick = function(e){
-    let baseURL = `${window.location.origin}${window.location.pathname}`;
-    if (e.target.checked === true) {
-      window.location.href =  `${baseURL}?most=1`
-    }
-    else {
-      window.location.href = baseURL;
-    }
-  }
-</script>
-{% endblock %}
-
 {% block main %}
-{% include "inc_breadcrumb.html" with tab="01" active_label="資料發布狀況" %}
+{% include "inc_breadcrumb.html" with tab="0503" active_label="" %}
 
-<div class="container">
-  <div class="row">
-    <h1 class="heading-lg-ul">
-      資料發布狀況
-      <span class="heading-footnote">全部</span>
-    </h1>
-    <div class="heading-sort-ctn">
-      <label class="custom-input-ctn">
-        <input type="checkbox" class="check-most">
-        <span class="checkmark"></span>
-        僅檢視科技部發布狀況
-        (TaiBIF 的資料庫及基礎建設乃由科技部之經費及相關計畫支持，勾選此項可了解科技部生物多樣性計畫物種資料開放狀況)
-      </label>
+
+<!-- container begin -->
+  <div class="container">
+
+    <!-- story title begin -->
+    <div class="article-head-wrapper">
+      <!-- <h1 class="heading-lg"> -->
+      <h1>
+        {{ dataset.title }}
+      </h1>
     </div>
+    <!-- story title end -->
 
+    <!-- article content begin -->
+    <div class="article-content-wrapper">
 
-    <h3>統整數據</h3>
+      <!-- 簡介 begin -->
+      <h4 class="heading-md-ul">簡介</h4>
+      <p>
+          {{ dataset.description }}
+      </p>
 
-    <div class="panel panel-default">
-      <div class="panel-heading">今年度上傳資料筆數</div>
-      <div class="panel-body">
-        <div id="taibif-stats__this_year_occurrence"></div>
+      <p>
+        <!-- 詮釋資料最後修改於：{{ dataset.mod_date|date:'Y/m/d' }}<br> -->
+        發布者：{{ dataset.organization_verbatim }}<br>
+        發布日期：{{ dataset.mod_date|date:'Y/m/d' }}<br>
+        <!-- 資料最後上傳日：{{ dataset.pub_date|date:'Y/m/d'}}<br> -->
+        資料授權引用格式：{{ dataset.data_license }}<br>
+        {% if dataset.gbif_doi %} DOI:  <a href="{{ dataset.doi_link }}"  target="_blank" >{{ dataset.gbif_doi }}</a><br>{% endif %}
+      </p>
+
+      {% if dataset.status == "PUBLIC" %}<div>資料集下載: <a href="{{ dataset.dwca_link }}">DwC-A</a></div>{% endif %}
+      {% if dataset.status == "PUBLIC" and not dataset.guid %}<div class="alert alert-warning" role="alert">This resource has not been registered with GBIF</div>{% endif %}
+
+      {% if dataset.dwc_core_type == "Occurrence" %}
+      <!-- row begin -->
+      <div class="row">
+
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="data-wall-ctn">
+            <span class="dtat-wall-name">出現紀錄筆數</span>
+            <span class="data-wall-numbers">{{ dataset.num_occurrence|intcomma }}</span>
+            <!-- <span class="data-wall-chart">
+              <img src="https://fakeimg.pl/70x70/846C5B/FAF9F9/?text=Chart">
+            </span> -->
+          </div>
+        </div>
+
+        <!-- <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="data-wall-ctn">
+            <span class="dtat-wall-name">有對應的分類群</span>
+            <span class="data-wall-numbers">{{ TaxNum }}</span>
+            <span class="dtat-wall-name">分類群（科）數</span>
+            <span class="data-wall-numbers">{{ FamNum }}</span>
+            <span class="dtat-wall-name">分類群（種）數</span>
+            <span class="data-wall-numbers">{{ SpNum }}</span> -->
+            <!-- <span class="data-wall-chart">
+              <img src="https://fakeimg.pl/70x70/846C5B/FAF9F9/?text=Chart">
+            </span> -->
+          <!-- </div>
+        </div> -->
+
+        <!-- <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="data-wall-ctn">
+            <span class="dtat-wall-name">含經度</span>
+            <span class="data-wall-numbers">{{ LonNum }}</span>
+            <span class="dtat-wall-name">含緯度</span>
+            <span class="data-wall-numbers">{{ LatNum }} </span> -->
+            <!-- <span class="data-wall-chart">
+              <img src="https://fakeimg.pl/70x70/846C5B/FAF9F9/?text=Chart">
+            </span> -->
+          <!-- </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="data-wall-ctn">
+            <span class="dtat-wall-name">含年份</span>
+            <span class="data-wall-numbers">{{ YrNum }}</span> -->
+            <!-- <span class="data-wall-chart">
+              <img src="https://fakeimg.pl/70x70/846C5B/FAF9F9/?text=Chart">
+            </span> -->
+          <!-- </div>
+        </div> -->
       </div>
-    </div>
+      {% endif %}
 
-    <div class="panel panel-default">
-      <div class="panel-heading">今年度上傳資料集數量</div>
-      <div class="panel-body">
-        <div id="taibif-stats__this_year_dataset"></div>
+     <!-- row end -->
+      <!-- 簡介 end -->
+
+      <!-- 地理分佈 begin >
+      <h4 class="heading-md-ul">地理分佈</h4>
+      <p>特有種。台東大漢山，新化農場至屏東茶茶牙賴一帶山區之闊葉林中。</p>
+      <p>
+        資料來源：
+        <a href="#"><span class="myicon icon-link"></span> 臺灣維管束植物簡誌 (楊遠波, 劉和義, 呂勝由)</a>
+        <a href="#"><img src="images/bynchorizontal.png"></a>
+      </p>
+      <img src="https://fakeimg.pl/600x300/?text=map" alt="" class="img-responsive">
+      < 地理分佈 end -->
+
+      <!-- 資料集說明 begin >
+      <h4 class="heading-md-ul">資料集說明</h4>
+      <p>台灣是在地質活動頻繁的大陸島，於 200-300 萬年前形成於四塊板塊所組成的聚合板塊邊緣之上。在這篇台灣植物相的研究中，研究者運用了 GBIF 整合之東亞與南亞開花植物類群分布的點位資料，再區分特有種與非特有種後，推測出後者潛在的播遷來源。許多豆科植物的生長與繁殖需仰賴與固氮菌(根瘤菌)的共生，這共生關係由六千萬年前的單一起源逐步演化而來。然而，此與微生物的共生關係會促進或減少植物分布範圍仍屬未知。</p>
+      <p><a href="#"><span class="myicon icon-link"></span>http://collections.nmnh.si.edu/search/botany/</a></p>
+      <資料集說明 end -->
+
+      <!-- 聯絡資訊 begin -->
+      <h4 class="heading-md-ul">聯絡資訊</h4>
+      <!-- row contact-info begin -->
+      <div class="row">
+        {% for i in contacts %}
+          <div class="col-md-6 col-xs-12">
+            <div class="contact-info-wrapper">
+              <p class="heading-md-ul">
+                {% if i.surname %}{{i.surname}}{% endif %}    {% if i.givenname %}{{i.givenname}}{% endif %}
+                {% if i.creator %}
+                  <span class="heading-footnote">Creator</span>
+                {% else %}
+                  {% if i.role %}
+                    <span class="heading-footnote">{{i.role}}</span>
+                  {% endif %}
+                {% endif %}
+              </p>
+              {% if i.postalcode or i.deliverypoint or i.electronicmailaddress or i.phone %}
+                <ul>
+                  {% if i.postalcode or i.deliverypoint %}<li><span class="myicon icon-pin"></span> {% if i.postalcode %}{{i.postalcode}}{% endif %}{% if i.deliverypoint %}{{i.deliverypoint}}{% endif %} </li>{% endif %}
+                  {% if i.electronicmailaddress %}<li><span class="myicon icon-mail"></span> {{i.electronicmailaddress}}</a></li>{% endif %}
+                  {% if i.phone %}{{i.phone}} {% endif %}
+                </ul>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
       </div>
-    </div>
+      <!-- row contact-info end -->
+      <!-- 聯絡資訊 end -->
+      {% if citation %}
+      <h4 class="heading-md-ul">參考文獻</h4>
+      <ul>
+        {% for i in citation %}
+          <li>
+            {% if i.citation %}{{i.citation}}<br>
+            {% if i.identifier %}{{i.identifier}}{% endif %}
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+        <!-- 引用格式 begin -->
+      {% if dataset.gbif_cite %}
+      <h4 class="heading-md-ul">引用格式</h4>
+      <p>{{ dataset.gbif_cite }}</p>
+      {% endif %}
+      <!-- 引用格式 end -->
 
-    <div class="panel panel-default">
-      <div class="panel-heading">累積資料筆數</div>
-      <div class="panel-body">
-        <div id="taibif-stats__trend_occurrence"></div>
-      </div>
     </div>
+    <!-- article content begin -->
 
-    <div class="panel panel-default">
-      <div class="panel-heading">累積資料集數量</div>
-      <div class="panel-body">
-        <div id="taibif-stats__trend_dataset"></div>
-      </div>
-    </div>
 
-    <div id="dataset-table-container"></div>
-    {% comment %}
-    <hr>
-    <h3>已發布資料列表 <small><a href="{% url 'search-dataset' %}" class="btn btn-default"> 👉 搜尋資料集</a></small></h3> 
-    <table class="table table-bordered">
-      <thead>
-        <tr><th width="20%">資料集名稱</th>
-          <th width="%26">發布單位</th>
-          <th width="10%">資料類型</th>
-          <th width="8%">資料筆數</th>
-          <th width="8%">出現紀錄</th>
-          <th width="10%">發佈時間</th><
-            th width="7%">地區</th>
-            <th width="11%">公開狀態</th></tr>
-      </thead>
-      {% for i in dataset_list %}
-      <tr><td>{% if i.status == "PUBLIC" %}<a href="{{ i.get_absolute_url }}">{{ i.title }}</a>{% else %}{{ i.title }}{% endif%}</td>
-        <td>{{ i.organization.name }}</td>
-        <td>{{ i.get_dwc_core_type_display }}</td>
-        <td>{{ i.num_record|intcomma }}</td>
-        <td>{{ i.num_occurrence|intcomma }}</td>
-        <td>{{ i.pub_date|date:'Y/m/d' }}</td>
-        <td>{{ i.country_for_human }}</td>
-        <td>{{ i.get_status_display }}{% if i.status == "PUBLIC" %}<br><small>{% if i.guid %}已註冊至 GBIF{% else %}未註冊至 GBIF{% endif %}</small>{% endif %}</td></tr>
-      {% endfor %}
-    </table>
-    {% endcomment %}
   </div>
-</div>
+   <!-- container end -->
+
 {% endblock %}
+
+
+
