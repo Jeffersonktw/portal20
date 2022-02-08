@@ -1,143 +1,60 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block head %}
-<link href="{% static 'css/taibif.css' %}" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
-<script src="{% static 'js/leaflet.js' %}"></script>
-    <style>
-        #map { width: auto; height: 600px; }
-        body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
-        .ghbtns { position: relative; top: 4px; margin-left: 5px; }
-        a { color: #0077ff; }
-    </style>
-{% endblock %}
-
-{% block script %}
-{% if map_view %}
-
-<script>
-
-  var map = L.map('map').setView([{{ map_view.0 }}, {{ map_view.1}} ], 13);
-
-  const tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map);
-  L.marker([{{ map_view.0 }}, {{ map_view.1}}]).addTo(map);
-</script>
-
-{% endif %}
-{% endblock %}
+{% block title %}Open Data 概述{% endblock %}
 
 {% block main %}
-{% include "inc_breadcrumb.html" with tab="0501" active_label="" %}
+{% include "inc_breadcrumb.html" with tab="01" active_label="Open Data 概述" %}
+
+
+<style>
+  p {
+  line-height: 1.8;
+  }
+
+  hr {
+  border-top: 1px solid;
+    }
+
+
+
+</style>
+
 
 <!-- container begin -->
 <div class="container">
-  <div class="article-head-wrapper">
-    {% if event.eventDate.value %}<span class="article-post-date">{{ event.eventDate.value }}</span>{% endif %}
-    <h1>
-      {% if intro.scientificName %}
-      {{ intro.scientificName }}
-      <!-- {{ occurrence.simple_data.taxon_species.scientific_name_infraspecific }} -->
-      {% elif occurrence.scientificname %}
-      {{ occurrence.scientificname }}
-      {% else %}
-      {{ occurrence }}
-      {% endif %}
-      {% if intro.name_zh %}
-      {{ intro.name_zh }}
-      {% endif %}
-    </h1>
+  <h2 class="h2">
+    什麼是開放資料？
+  </h2>
+  <hr>
+
+  <div class="article-content-wrapper">
+    <h4 class="heading-md" style="font-weight:bold">開放是在說什麼？</h4>
+
+      <blockquote>Open data is data that can be freely used, reused and redistributed by anyone - subject only, at most, to the requirement to attribute and sharealike. (開放資料指的是資料能被任何人自由地使用，重新使用與散佈 – 我們至多只能要求來源標示，與以相同方式分享)</blockquote>
+
+    <p>關於「開放資料」的定義在 Open Definition (<a href="https://opendefinition.org/od/2.1/en/" target="_block">full Open Definition</a>) 內有更詳細的說明。在這我們列出其中最重要的幾點：</p>
+
+    <ul>
+      <li><strong>Availability and Access / 可得性與可讀性 : </strong>資料必須完整釋出，同時只能依照再製的成本徵收適當的費用。最好能提供網路下載。同時提供的資料格式必須是適用和可被修改的。</li>
+      <li><strong>Re-use and Redistribution / 重新使用與散播 :</strong> 資料釋出時必須採用允許資料的重新使用和散播的授權聲明。並允許與其他資料混合使用。</li>
+      <li><strong>Universal Participation/ 分享的普遍性 :</strong> 任何人都可使用，重新使用和散佈這些資料 - 不能限制資料使用的範圍，或是使用者的資格。例如，「非商業使用」將禁止資料在所有「商業性質」的使用，或是限制資料只能使用在某個範圍內 (例如，只能作為教育上使用)。這些限制都是不被允許的。</li>
+    </ul>
+
+    <br>
+      <p>如果你對於為什麼我們如此執著在「開放」的定義和為什麼會如此定義感到疑惑，最簡單的答案就是：<strong> interoperability – 可互通 (用) 性</strong> 。</p>
+
+      <p>可互通性指的是不同的系統與組織可以共同運作 (inter-operate) 的能力。在這裡，可互通性意味著讓不同的資料集 (datasets) 可以彼此引用或是相互混用的能力。</p>
+
+      <p>可互通性的重要性在於，這是讓不同的元件可以一起共同運作的條件。這種將所有事物元件化和讓他們可以彼此 嵌合 的能力，對於建立一個更大更複雜的系統來說是絕對必要的。如果沒有這個可互通性，那就完全不可能達到這樣的結果。一個眾所皆知的例子就是巴別塔的神話故事，因為缺乏彼此溝通（互用）的能力（無能力），最後的結果就是整個塔的崩潰。</p>
+
+      <p>面對資料我們也有類似的問題。當我們提到資料 (或著程式碼) 共用 (commons) 時，我們指的是「開放」資料中的一部分，可以自由地與其他「開放」資料相互混用。而可互通性就是達到「開放性」(openness) 所帶來的最大好處時最重要條件 : 因為當不同資料集可以更容易地組合在一起，我們就能更容易地發展出更多和更好的產品與服務（這些好處將在「為什麼要開放資料」一章中有更詳細的說明）</p>
+
+      <p>對「開放性」提出一個清楚的定義可以讓我們在使用資料時，只要所用的資料符合這個開放定義，就能確定資料彼此可混和使用。同時也能確定我們不需面對另一座「巴別塔」 ‘tower of babel’ : 雖然擁有很多資料集，但是只有一小部分可以彼此互用。或更慘的是資料完全無法相互混和來建立一個更大的系統。當然也沒辦法將資料的價值呈現出來。</p>
   </div>
 
-  <div class="jumbotron">
-    <dl>      
-      <!-- <dd>{{ intro.scientificname}}{% if intro.simple_data.taxon_species %} (<a href="/species/{{ intro.spe }} ">{{ occurrence.simple_data.taxon_species.scientific_name_infraspecific}}</a>){% endif %}</dd> -->
-      <dt>物種</dt>
-      <dd>{{ intro.scientificName}}</dd>
-      <dt>資料集</dt>
-      <dd><a href="/dataset/{{ intro.dataset}}">{{ intro.dataset_zh }}</a></dd>
-      <dt>發布單位</dt>
-      <dd>{%if intro.publisher_id%}<a href="/dataset/{{ intro.publisher}}">{% endif %}{{ intro.publisher }}</a></dd>
-    </dl>
-  </div>
-  {% if map_view %}<div id="map"></div>{% endif %}
-
-
-  <div class="article-head-wrapper">
-    <h1 class="heading-lg-ul">基本資料 Record</h1>
-  </div>
-  
-  <table class="table">
-    <thead><tr><th width="40%">欄位名稱</th><th>值</th></tr></thead>
-    <tbody>
-      {% for k,v in record.items %}
-          {% if v.value != None %}
-            <tr><td>{{ v.name_zh }}</td><td>{{ v.value }}</td></tr>
-          {% endif %}      
-      {% endfor %}
-    </tbody>
-    </table>
-    
-    <div class="article-head-wrapper">
-      <h1 class="heading-lg-ul">出現紀錄 Occurrence</h1>
-    </div>
-    <table class="table">
-      <thead><tr><th width="40%">欄位名稱</th><th>值</th></tr></thead>
-      <tbody>
-        {% for k,v in record.items %}
-          {% if v.value != None %}
-            <tr><td>{{ v.name_zh }}</td><td>{{ v.value }}</td></tr>
-          {% endif %}      
-        {% endfor %}
-      </tbody>
-      </table>
-     
-      <div class="article-head-wrapper">
-        <h1 class="heading-lg-ul">調查活動 Event</h1>
-      </div>
-      <table class="table">
-        <thead><tr><th width="40%">欄位名稱</th><th>值</th></tr></thead>
-        <tbody>
-          {% for k,v in event.items %}
-            {% if v.value != None %}
-              <tr><td>{{ v.name_zh }}</td><td>{{ v.value }}</td></tr>
-            {% endif %}  
-          {% endfor %}
-        </tbody>
-        </table>
-
-
-      <div class="article-head-wrapper">
-        <h1 class="heading-lg-ul">分類 Taxon</h1>
-      </div>
-      <table class="table">
-        <thead><tr><th width="40%">欄位名稱</th><th>值</th></tr></thead>
-        <tbody>
-          {% for k,v in taxon.items %}
-            {% if v.value != None %}
-              <tr><td>{{ v.name_zh }}</td><td>{{ v.value }}</td></tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-        </table>
-
-
-      <div class="article-head-wrapper">
-        <h1 class="heading-lg-ul">地理資訊 Location</h1>
-      </div>
-      <table class="table">
-        <thead><tr><th width="40%">欄位名稱</th><th>值</th></tr></thead>
-        <tbody>
-          {% for k,v in location.items %}
-            {% if v.value != None %}
-              <tr><td>{{ v.name_zh }}</td><td>{{ v.value }}</td></tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-        </table>
-
+  <hr>
+  <div><small>文字來源: <a href="https://opendatahandbook.org/guide/zh_TW/what-is-open-data/" target="_blank">Open Data Handbook</a></small></div>
 
 </div>
   <!-- container end -->
