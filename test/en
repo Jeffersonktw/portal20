@@ -1,69 +1,316 @@
-{% extends "base.html" %}
-
 {% load static %}
 {% load helper_tags %}
+{% load i18n %}
 
-{% block head %}
+<!doctype html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <link href="{%  static 'favicon.ico' %}" rel="icon" type="image/x-icon" />
+    
+
+    {% block meta %}
+    {% endblock %}
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Owl Stylesheets -->
+    <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/owl.theme.default.min.css' %}" rel="stylesheet">
+
+    {% comment %}
+    <!-- Full Calendar Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/fullcalendar-core-main.min.css' %}">
+    {% endcomment %}
+
     <!-- date range picker CSS -->
     <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}">
     <!-- DataTables -->
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
-{% endblock %}
 
-{% block script %}
-  <!-- date range picker -->
-  <script src="{% static 'js/daterangepicker/moment.min.js' %}"></script>
-  <script src="{% static 'js/daterangepicker/daterangepicker.js' %}"></script>
-  <script>
-    $(function () {
-      //Date range picker
-      $('#newsFilter').daterangepicker({
-        locale: {
-          format: 'YYYY-MM-DD'
-        },
-      }, function(start, end, label) {
-        const start_date = start.format('YYYY-MM-DD');
-        const end_date = end.format('YYYY-MM-DD');
-        window.location = `?start=${start_date}&end=${end_date}`;
-      });
+    <!-- leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 
-      // topic type select
-      // 用 API 處理 !
-      $('.select-category-sci').click(function(e){
-        const selectedType = e.target.dataset.type;
-        window.location = `${window.location.origin}/article/category/${selectedType}`;
-      });
-    });
-  </script>
-{#<script src="{% static 'js/article.js' %}"></script>#}
-{% endblock %}
+    {% block head %}
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-159438257-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-{% block main %}
+      gtag('config', 'UA-159438257-1');
+    </script>
+    <title>TaiBIF :: {% block title%}{% endblock %}</title>
+  </head>
 
-  {% include "inc_breadcrumb.html" with tab="04" active_label="" %}
+  <body>
+  <button onclick="topFunction()" id="top" title="Return to top" class="btn-2top myicon icon-arrow-up"></button>
+  <!-- Header begin -->
+  <div class="header-fluid">
+    <nav class="navbar-main navbar-fixed-top">
+      <div class="container">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'images/taibif-logo.png' %}" class="hidden-xs navbar-brand-l" style="margin-top:8px"><img src= "{% static 'images/taibif-logo-rgb-s.jpg' %}" class="visible-xs navbar-brand-s"></a>
+        <div class="row">
+          <!-- hidden xs begin -->
+          <div class="hidden-xs col-xs-6 navbar-hidden-xs">
+            <div class="navbar-search-wrapper">
+              <input type="text" class="navbar-search-input" id="navbar-search-input" placeholder="全站搜尋...">
+              <button class="navbar-search-btn" id="navbar-search-btn" type="button">
+                <span class="myicon icon-search"></span>
+              </button>
+            </div>
+            <a href="https://www.facebook.com/TaiBIF.tw/" target="_blank" class="navbar-oval-btn"><span class="myicon icon-social-fb"></span></a>
+            <!--<a href="#" target="_blank" class="navbar-oval-btn"><span class="myicon icon-social-yt"></span></a>-->
+            <a href="#" class="navbar-language-btn" data-toggle="modal" data-target=".xs-lang-modal-pos"><span class="myicon icon-language"></span>
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_language_info for LANGUAGE_CODE as lang %}
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as languages %}
+            {{ lang.name_local }}
+             </a>
 
-  <!-- container begin -->
-  <div class="container">
-    {% for article in article_list %}
-    <div class="row listbox-img-right-wrapper">
-      <div class="col-xs-8">
-        <span class="listbox-inner-date">{{ article.created|date:'Y/m/d' }}</span>
-        <h3 class="listbox-inner-title"><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h3>
-        <p class="listbox-inner-summary hidden-xs">
-          {{ article.content | linebreaks | truncatechars:150}}
-            <p><a href="{% url 'article-detail-id' pk=article.id %}">閱讀更多</a></p>
-        </p>
+          </div>
+          <!-- hidden xs end -->
+          <!-- visible xs begin -->
+          <div class="visible-xs col-xs-6 navbar-visible-xs">
+            <a href="#" class="navbar-icon-btn" id="xs-navbtn-search" data-toggle="modal" data-target=".xs-search-modal-pos">
+              <span class="myicon icon-search"></span>
+            </a>
+            <a href="#" class="navbar-icon-btn" id="xs-navbtn-lang" data-toggle="modal" data-target=".xs-lang-modal-pos">
+              <span class="myicon icon-language"></span>
+            </a>
+          </div>
+          <!-- visible xs end -->
+        </div>
       </div>
-      {% comment %}
-      <div class="col-xs-4">
-        <a href=""><img src="/media/{{ article.cover }}" class="img-responsive"></a>
+
+      <!-- navbar -->
+      <div class="navbar-collapse-wrapper">
+        <div class="container">
+          <div class="navbar-collapse collapse" id="navbar">
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a class="dropdown-toggle" href="#" id="DropdownMenu-search" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {% trans "找資料" %}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="DropdownMenu-data">
+                  <li><a href="{% url 'search-occurrence' cat='search' %}">{% trans "物種出現紀錄" %}</a></li>
+                  <li><a href="{% url 'search-species' %}">{% trans "物種" %}</a></li>
+                  <li><a href="{% url 'search-dataset' %}">{% trans "資料集" %}</a></li>
+                  <li><a href="{% url 'search-publisher' %}">{% trans "發布單位" %}</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" href="#" id="DropdownMenu-data" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {% trans "資料開放" %}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="DropdownMenu-data">
+                  <li><a href="{% url 'open_data' %}">{% trans "Open Data 概述" %}</a></li>
+                  <li><a href="{% url 'data_stats' %}">{% trans "資料發布狀況" %}</a></li>
+                  <li><a href="{% url 'publishing_data' %}">{% trans "資料上傳" %}</a></li>
+                  <li><a href="{% url 'journals' %}">{% trans "資料論文/期刊" %}</a></li>
+                  <li><a href="{% url 'data_policy' %}">{% trans "使用條款暨隱私權政策" %}</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" href="#" id="DropdownMenu-tool" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {% trans "工具與文件" %}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="DropdownMenu-tool">
+                  <li><a href="{% url 'tools' %}">{% trans "工具分享" %}</a></li>
+                  {#<li><a href="#">{% trans "檔案下載" %}</a></li>#}
+                  <li><a href="{% url 'cookbook' %}">{% trans "Cookbook" %}</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" href="#" id="DropdownMenu-about" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {% trans "關於 TaiBIF" %}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="DropdownMenu-about">
+                  <li><a href="{% url 'about_taibif' %}">{% trans "TaiBIF 簡介" %}</a></li>
+                  {#<li><a href="{% url 'plans' %}">TaiBIF 年度計畫成果</a></li>#}
+                  <li><a href="{% url 'about_gbif' %}">{% trans "GBIF 介紹" %}</a></li>
+                  <li><a href="{% url 'contact_us' %}">{% trans "聯絡我們" %}</a></li>
+                  <li><a href="{% url 'links' %}">{% trans "相關連結" %}</a></li>
+                </ul>
+              </li>
+
+              <li class="dropdown">
+                <a class="dropdown-toggle" href="#" id="DropdownMenu-more" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {% trans "更多資訊" %}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="DropdownMenu-more">
+                  <li class="dropdown-group-wrapper clearfix">
+                    <ul class="dropdown-group-ctn">
+                      <li class="dropdown-group-cate hidden-xs">{% trans "最新消息" %}</li>
+                      <li><a href="{% url 'article-list' category='news' %}">{% trans "新聞" %}</a></li>
+                      <li><a href="{% url 'article-list' category='event' %}">{% trans "活動" %}</a></li>
+                      <li><a href="{% url 'article-list' category='update' %}">{% trans "更新" %}</a></li>
+                    </ul>
+                    <ul class="dropdown-group-ctn">
+                      <li class="dropdown-group-cate hidden-xs">{% trans "專題文章" %}</li>
+                      <li><a href="{% url 'article-list' category='sci' %}">{% trans "科普文章" %}</a></li>
+                      <li><a href="{% url 'article-list' category='tech' %}">{% trans "技術專欄" %}</a></li>
+                      <li><a href="{% url 'article-list' category='pub' %}">{% trans "出版品資料" %}</a></li>
+                      <li><a href="{% url 'article-list' category='pos' %}">{% trans "TaiBIF發表文章/海報" %}</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li class="visible-xs navbar-collapse-xs">
+                追蹤：
+                <a href="https://www.facebook.com/TaiBIF.tw/" target="_blank"><span class="myicon icon-social-fb"></span></a>
+                <a href="#" target="_blank"><span class="myicon icon-social-yt"></span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
-      {% endcomment %}
-    </div>
-    {% endfor %}
-
-    {% include "inc_pagination.html" with object_list=article_list %}
-
+    </nav>
   </div>
-   <!-- container end -->
-{% endblock %}
+
+  <!-- xs-search-modal begin -->
+  <div class="modal fade xs-modal-wrapper xs-search-modal-pos" data-backdrop="false">
+    <div class="xs-modal-content">
+      <div class="xs-modal-header">
+        <span class="xs-search-modal-close myicon icon-close" data-dismiss="modal" aria-label="Close"></span>
+        <p class="text-center xs-modal-title">搜尋</p>
+      </div>
+      <div class="xs-modal-body">
+        <div class="xs-search-modal-input-group">
+          <input type="text" class="navbar-search-input" placeholder="請輸入關鍵字...">
+          <button class="navbar-search-btn" type="button">
+            <span class="myicon icon-search"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- xs-search-modal end -->
+
+  <!-- xs-lang-modal begin -->
+  <div class="modal fade lang-modal-wrapper xs-lang-modal-pos" role="dialog" data-backdrop="false">
+    <div class="xs-modal-content">
+      <div class="xs-modal-header">
+        <span class="xs-search-modal-close myicon icon-close" data-dismiss="modal" aria-label="Close"></span>
+        <p class="text-center xs-modal-title">Change Language</p>
+      </div>
+
+      <div class="xs-modal-body">
+        <label class="custom-input-ctn">
+          <input type="radio" name="radio">
+          <form name="ui" action="{% url 'set_language' %}" method="post">{% csrf_token %}
+              <input name="next" type="hidden" value="{{ redirect_to }}" />
+              <input name="language" type="hidden"/>
+
+            </form>
+          {% for language in languages %}
+              <a href="#" onclick="document.ui.language.value='{{ language.code}}'; document.ui.submit();">{{ language.name_local }}</a><br>
+          {% endfor %}
+
+        </label>
+      </div>
+    </div>
+  </div>
+  <!-- xs-lang-modal end -->
+
+  <!-- Header end -->
+
+  {% block main %}
+  {% endblock %}
+
+  <!-- footer begin -->
+  <div class="container-fluid footer-wrapper">
+    <div class="container">
+      <div id='calendar'></div>
+      <a href="/"><img src="{% static 'images/taibif-logo-w-l.png' %}" class="ft-brand center-block"></a>
+      <p class="ft-contact">
+          <span class="myicon icon-pin-stroke" aria-hidden="true">11529 台北市南港區研究院路二段 128 號</span>
+          <span class="ft-xs-block">跨領域科技研究大樓 C301室</span>
+      </p>
+      <p class="ft-copywrite">Copyright © TaiBIF 臺灣生物多樣性資訊機構</p>
+    </div>
+  </div>
+  <!-- footer end -->
+
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  {% get_taibif_env as taibif_env %}
+  {% if taibif_env == "local" %}
+  <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+  {% else %}
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+  {% endif %}
+
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/page.js' %}"></script>
+
+  <!-- owl carousel -->
+  <script src="{% static 'js/OwlCarousel/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'js/OwlCarousel/owl.carousel2.thumbs.min.js' %}"></script>
+
+  <!-- DataTables -->
+  <script src="{% static 'js/datatable/jquery.dataTables.js' %}"></script>
+  <script src="{% static 'js/datatable/dataTables.bootstrap.min.js' %}"></script>
+
+
+  <!-- script 4 owl carousel begin -->
+<script>
+  $(document).ready(function() {
+    //navbar-search
+    //const v \ $('#navbar-search-input').val();
+    $('#navbar-search-btn').click(function(){
+      const q =$('#navbar-search-input').val();
+      window.location.href = `/search/?q=${q}`;
+    });
+    var owl_topic = $('#topic-board');
+    owl_topic.owlCarousel({
+      margin: 20,
+      nav: true,
+      dots: true,
+      loop: true,
+      autoplay: true,
+      autoplayTimeout: 3000,
+      autoplayHoverPause: true,
+      thumbs: false,
+      responsive:{
+          0:{
+              items:1
+          },
+          650:{
+              items:2
+          },
+          1000:{
+              items:4
+          }
+      }
+    })
+  })
+</script>
+<!-- script 4 owl carousel end -->
+
+
+
+  {% block script %}
+  {% endblock %}
+
+  </body>
+</html>
+
+
+
+
+
+
